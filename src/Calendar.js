@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import DayBox from "./DayBox";
 import styled from "styled-components";
 import moment from "moment";
 
@@ -21,9 +22,7 @@ const Calendar = (props) => {
                             let days = today.clone().startOf('year').week(week).startOf('week').add(index, 'day'); // Object
                             return(
                                 <RowBox key={index}>
-                                    <DayBox>
-                                        <span>{ days.format('D') }</span>
-                                    </DayBox>
+                                    <DayBox days={days} />
                                 </RowBox>
                             );
                         })
@@ -110,14 +109,6 @@ const Tablebody = styled.tbody`
 `;
 const RowBox = styled.td`
     height: 120px;
-`;
-const DayBox = styled.div`
-    height: 100%;
-    & > span {
-        float: right;
-        margin: 12px 12px 0 0;
-        font-weight: 700;
-    }
 `;
 
 export default Calendar;
