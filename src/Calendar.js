@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DayBox from "./DayBox";
+import {useSelector} from "react-redux";
 import styled from "styled-components";
 import moment from "moment";
 
@@ -9,7 +10,7 @@ const Calendar = (props) => {
     const first_week = today.clone().startOf('month').week();
     const last_week = today.clone().endOf('month').week() === 1 ? 53 : today.clone().endOf('month').week();
 
-    //console.log(today.clone().startOf('week').add(1, 'day').format('YYYY/MM/DD'));
+    const schedule_list = props.schedule_list;
 
     const makeCalendar = () => {
         let result = [];
@@ -20,9 +21,18 @@ const Calendar = (props) => {
                     {
                         Array(7).fill(0).map((val, index) => {
                             let days = today.clone().startOf('year').week(week).startOf('week').add(index, 'day'); // Object
+
+                            const schedule_result = schedule_list.filter((v, i) => {
+                                let full_date = v.date.split(' ')[0];
+                                if(full_date === days.format('YYYY-MM-DD')) {
+                                    return v;
+                                }
+                                return undefined;
+                            });
+
                             return(
                                 <RowBox key={index}>
-                                    <DayBox days={days} />
+                                    <DayBox days={days} schedule_result={schedule_result} />
                                 </RowBox>
                             );
                         })
@@ -42,27 +52,29 @@ const Calendar = (props) => {
     };
 
     return (
-        <CalendarStyle>
-            <caption>
-                <button onClick={prevMonth}>&lt;</button>
-                <span>{today.format('YYYY년 MM월')}</span>
-                <button onClick={afterMonth}>&gt;</button>
-            </caption>
-            <Tablehead>
-                <tr>
-                    <th>일</th>
-                    <th>월</th>
-                    <th>화</th>
-                    <th>수</th>
-                    <th>목</th>
-                    <th>금</th>
-                    <th>토</th>
-                </tr>
-            </Tablehead>
-            <Tablebody>
-                { makeCalendar() }
-            </Tablebody>
-        </CalendarStyle>
+        <main>
+            <CalendarStyle>
+                <caption>
+                    <button onClick={prevMonth}>&lt;</button>
+                    <span>{today.format('YYYY년 MM월')}</span>
+                    <button onClick={afterMonth}>&gt;</button>
+                </caption>
+                <Tablehead>
+                    <tr>
+                        <th>일</th>
+                        <th>월</th>
+                        <th>화</th>
+                        <th>수</th>
+                        <th>목</th>
+                        <th>금</th>
+                        <th>토</th>
+                    </tr>
+                </Tablehead>
+                <Tablebody>
+                    { makeCalendar() }
+                </Tablebody>
+            </CalendarStyle>
+        </main>
     );
 };
 
@@ -75,14 +87,16 @@ const CalendarStyle = styled.table`
         font-size: 1.3rem;
         margin: 30px 0;
     }
-    & button {
-        border: 1px solid #154c79;
-        border-radius: 20px;
-        background-color: #154c79;
-        color: #fff;
+    & > caption > button {
+        outline: none;
+        border: 1px solid #fff;
+        background-color: #fff;
+        color: #154c79;
+        font-size: 2rem;
         font-weight: 800;
         width: 40px;
         height: 40px;
+        cursor: pointer;
     }
     & > caption > span {
         margin: 0 1.5rem;
