@@ -5,6 +5,7 @@ const LOAD = 'schedule/LOAD';
 const CREATE = 'schedule/CREATE';
 const DELETE = 'schedule/DELETE';
 const UPDATE = 'schedule/UPDATE';
+const UPDATETITLE = 'schedule/UPDATETITLE';
 const LOADED = "schedule/LOADED";
 
 const db = firestore.collection('schedule');
@@ -27,6 +28,10 @@ export const createCalendar = (calendar) => {
 
 export const updateCalendar = (calendar) => {
     return { type: UPDATE, calendar };
+} 
+
+export const updateCalendarTitle = (calendar) => {
+    return { type: UPDATETITLE, calendar };
 } 
 
 export const deleteCalendar = (calendar) => {
@@ -72,21 +77,40 @@ export const updateScheduleFB = (id) => {
         const temp = getState().schedule.schedule;
 
         const data = temp.filter((val) => {
-            if(val.id === id){
-                return val;
-            }
+            return val.id === id;
         });
-
-        console.log(data[0].id);
 
         if(!data[0].id){
             return;
         }
 
-        let updated = {...data, completed: true};
+        let updated = {...data[0], completed: true};
 
         db.doc(data[0].id).update(updated).then(() => {
             dispatch(updateCalendar(id));
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+};
+
+export const updateScheduleTitleFB = (id, title) => {
+    return function(dispatch, getState){
+        const temp = getState().schedule.schedule;
+
+        const data = temp.filter((val) => {
+            return val.id === id;
+        });
+
+        if(!data[0].id){
+            return;
+        }
+
+        let updated = {...data[0], title: title};
+
+        db.doc(data[0].id).update(updated).then(() => {
+            let data = [id, title];
+            dispatch(updateCalendarTitle(data));
         }).catch((err) => {
             console.log(err);
         });
@@ -98,9 +122,7 @@ export const deleteScheduleFB = (id) => {
         const temp = getState().schedule.schedule;
 
         const data = temp.filter((val) => {
-            if(val.id === id){
-                return val;
-            }
+            return val.id === id;
         });
 
         if(!data[0].id){
@@ -136,11 +158,19 @@ export default function reducer(state = initialState, action = {}) {
                 }
             });
             return {schedule: update_calendar_schedule};
-        case 'schedule/DELETE':
-            const delet_calendar_schedule = state.schedule.filter((val) => {
-                if(val.id !== action.calendar){
+
+        case 'schedule/UPDATETITLE':
+            const update_calendar_schedule_title = state.schedule.map((val) => {
+                if(val.id === action.calendar[0]){
+                    return { ...val, title: action.calendar[1] };
+                } else {
                     return val;
                 }
+            });
+            return {schedule: update_calendar_schedule_title};
+        case 'schedule/DELETE':
+            const delet_calendar_schedule = state.schedule.filter((val) => {
+                return val.id !== action.calendar;
             });
             return {schedule: delet_calendar_schedule};
         case 'schedule/LOADED':

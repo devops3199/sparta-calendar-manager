@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import DayBox from "./DayBox";
-import {useSelector} from "react-redux";
 import styled from "styled-components";
 import moment from "moment";
 
@@ -14,13 +13,13 @@ const Calendar = (props) => {
 
     const makeCalendar = () => {
         let result = [];
-        let week = first_week;
-        for(week; week <= last_week; week++) {
+        let start_week = first_week;
+        for(start_week; start_week <= last_week; start_week++) {
             result = result.concat(
-                <tr key={week}>
+                <tr key={start_week}>
                     {
                         Array(7).fill(0).map((val, index) => {
-                            let days = today.clone().startOf('year').week(week).startOf('week').add(index, 'day'); // Object
+                            let days = today.clone().startOf('year').week(start_week).startOf('week').add(index, 'day'); // Object
 
                             const schedule_result = schedule_list.filter((v, i) => {
                                 let full_date = v.date.split(' ')[0];
@@ -107,8 +106,9 @@ const Tablehead = styled.thead`
     height: 40px;
     color: #fff;
     & > tr {
-        border: 1px solid #154c79;
-        background-color: #154c79;
+        border-top: 1px solid #154c79;
+        background-color: #fff;
+        color: #154c79;
     }
     & th {
         font-size: 1.1rem;
@@ -118,7 +118,8 @@ const Tablehead = styled.thead`
 const Tablebody = styled.tbody`
     & td {
         width: 9.5vw;
-        border: 1px solid #154c79;
+        border-top: 1px solid #154c79;
+        border-bottom: 1px solid #154c79;
     }
 `;
 const RowBox = styled.td`

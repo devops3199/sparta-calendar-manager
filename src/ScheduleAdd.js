@@ -20,6 +20,7 @@ const ScheduleAdd = (props) => {
         let title = schedule_title.current.value;
         let time = schedule_date.current.value + ' ' + schedule_time.current.value;
         dispatch(addScheduleFB(title, time));
+        props.setScheduleAdded();
         props.history.goBack();
     };
 
@@ -35,7 +36,7 @@ const ScheduleAdd = (props) => {
                 <ContentBox>
                     <input type="text" ref={schedule_title} placeholder="할 일을 입력하세요"/>
                 </ContentBox>
-                <button onClick={addSchedule}>일정 추가</button>
+                <AddScheduleButton onClick={addSchedule}>일정 추가</AddScheduleButton>
             </ScheduleAddContainer>
         </ScheduleWrapper>
     );
@@ -51,19 +52,8 @@ const ScheduleAddContainer = styled.div`
     flex-flow: column;
     justify-content: center;
     align-items: center;
-
-    & button {
-        border: 1px solid #154c79;
-        border-radius: 5px;
-        background-color: #154c79;
-        color: #fff;
-        width: 70px;
-        height: 30px;
-    }
-
-    & button:hover {
-        cursor: pointer;
-    }
+    width: 300px;
+    margin: 0 auto;
 `;
 
 const DatePick = styled.div`
@@ -102,6 +92,17 @@ const ContentBox = styled.div`
         padding: 0.25rem 0.5rem;
         font-size: 1.1rem;
     }
+`;
+
+const AddScheduleButton = styled.div`
+    border: 1px solid #154c79;
+    border-radius: 5px;
+    background-color: #154c79;
+    color: #fff;
+    -webkit-box-shadow: 1px 1px 8px -1px #154c79; 
+    box-shadow: 1px 1px 8px -1px #154c79;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
 `;
 
 export default ScheduleAdd;

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from "styled-components";
 import Calendar from './Calendar';
 import ScheduleAdd from './ScheduleAdd';
+import Spinner from './Spinner';
 import './App.css';
 import { withRouter } from "react-router";
 import { Switch, Route } from "react-router-dom";
@@ -26,7 +27,9 @@ class App extends React.Component {
 
     this.state = {
       filterCompleted : false,
-      buttonName : '완료된 일정 보기',
+      topButtonName : '완료된 일정 보기',
+      scheduleAdded : false,
+      bottomButtonName : '일정 추가',
     };
 
   }
@@ -37,26 +40,43 @@ class App extends React.Component {
 
   filterActivate = () => {
     if(this.state.filterCompleted){
-      this.setState({filterCompleted : false, buttonName : '완료된 일정 보기'});
+      this.setState({filterCompleted : false, topButtonName : '완료된 일정 보기'});
     } else {
-      this.setState({filterCompleted : true, buttonName : '모든 일정 보기'});
+      this.setState({filterCompleted : true, topButtonName : '모든 일정 보기'});
     }
-    console.log(this.state.filterCompleted, this.state.buttonName);
+  };
+
+  scheduleAddPage = () => {
+    if(this.state.scheduleAdded){
+      this.setState({scheduleAdded : false, bottomButtonName : '일정 추가'});
+      this.props.history.push('/');
+    } else {
+      this.setState({scheduleAdded : true, bottomButtonName : '뒤로 가기'});
+      this.props.history.push('/add');
+    }
+  };
+
+  setScheduleAdded = () => {
+    this.setState({scheduleAdded : false, bottomButtonName : '일정 추가'});
   };
 
   render() {
     return(
       <div className="App">
-        <Title>나만의 일정 매니저</Title>
-        <Line/>
-        <Switch>
-          <Route path="/" exact render={() => <Calendar schedule_list={!this.state.filterCompleted ? this.props.schedule_list : this.props.schedule_list.filter((val) => { if(val.completed) { return val; } })} />} />
-          <Route path="/add" exact component={ScheduleAdd} />
-        </Switch>
-        <FloatBox>
-          <button onClick={this.filterActivate}>{this.state.buttonName}</button>
-          <button onClick={() => {this.props.history.push('/add');}}>일정 추가</button>
-        </FloatBox>
+        {!this.props.is_loaded ? (<Spinner/>) : (
+          <React.Fragment>
+            <Title>나만의 일정 매니저</Title>
+            <Line/>
+            <Switch>
+              <Route path="/" exact render={() => <Calendar schedule_list={!this.state.filterCompleted ? this.props.schedule_list : this.props.schedule_list.filter((val) => { return val.completed })} />} />
+              <Route path="/add" exact render={() => <ScheduleAdd history={this.props.history} setScheduleAdded={this.setScheduleAdded} />} />
+            </Switch>
+            <FloatBox>
+              <button onClick={this.filterActivate}>{this.state.topButtonName}</button>
+              <button onClick={this.scheduleAddPage}>{this.state.bottomButtonName}</button>
+            </FloatBox>
+          </React.Fragment>
+        )}
       </div>
     );
   }
@@ -67,8 +87,9 @@ const Title = styled.h1`
 `;
 
 const Line = styled.hr`
-  margin: 16px 0px;
-  border: 1px dotted #ddd;
+  width: 80vw;
+  margin: 16px auto;
+  border: 1px dotted #154c79;
 `;
 
 const FloatBox = styled.div`
@@ -83,9 +104,11 @@ const FloatBox = styled.div`
     background-color: #154c79;
     color: #fff;
     margin: 10px 0;
-    width: 150px;
+    width: 110px;
     height: 40px;
     outline: none;
+    -webkit-box-shadow: 1px 1px 8px -1px #154c79; 
+    box-shadow: 1px 1px 8px -1px #154c79;
   }
   & button:hover {
     cursor: pointer;
