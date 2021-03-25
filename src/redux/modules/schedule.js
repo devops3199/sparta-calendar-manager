@@ -88,6 +88,7 @@ export const updateScheduleFB = (id) => {
 
         db.doc(data[0].id).update(updated).then(() => {
             dispatch(updateCalendar(id));
+            dispatch(isLoaded(true));
         }).catch((err) => {
             console.log(err);
         });
@@ -111,6 +112,7 @@ export const updateScheduleTitleFB = (id, title) => {
         db.doc(data[0].id).update(updated).then(() => {
             let data = [id, title];
             dispatch(updateCalendarTitle(data));
+            dispatch(isLoaded(true));
         }).catch((err) => {
             console.log(err);
         });
@@ -131,6 +133,7 @@ export const deleteScheduleFB = (id) => {
 
         db.doc(data[0].id).delete().then(() => {
             dispatch(deleteCalendar(id));
+            dispatch(isLoaded(true));
         }).catch((err) => {
             console.log(err);
         });

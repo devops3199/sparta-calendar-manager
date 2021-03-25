@@ -12,6 +12,8 @@
     "@testing-library/user-event": "^12.1.10",
     "classnames": "^2.2.6",
     "firebase": "^8.3.1",
+    "firebase-tools": "^9.7.0",
+    "global": "^4.4.0",
     "moment": "^2.29.1",
     "node-sass": "4.14.1",
     "open-color": "^1.8.0",
